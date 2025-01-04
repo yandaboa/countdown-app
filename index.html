@@ -3,8 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown to March</title>
+    <title>Countdown</title>
     <style>
+        /* Theme definitions */
+        .theme-dark {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-color: #4CAF50;
+            --modal-bg: #2a2a2a;
+            --modal-input-bg: #333;
+            --modal-border: #404040;
+        }
+
+        .theme-light {
+            --bg-color: #f5f5f5;
+            --text-color: #1a1a1a;
+            --text-secondary: #666666;
+            --accent-color: #4CAF50;
+            --modal-bg: #ffffff;
+            --modal-input-bg: #f8f8f8;
+            --modal-border: #e0e0e0;
+        }
+
+        /* Update existing styles to use CSS variables */
         body {
             font-family: 'Arial', sans-serif;
             display: flex;
@@ -12,8 +34,9 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #1a1a1a;
-            color: #e0e0e0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .countdown-container {
@@ -22,7 +45,7 @@
         }
 
         h1 {
-            color: #ffffff;
+            color: var(--text-color);
             margin-bottom: 1.5rem;
             font-size: 3rem;
             font-weight: 300;
@@ -31,14 +54,14 @@
 
         .countdown {
             font-size: 4rem;
-            color: #ffffff;
+            color: var(--text-color);
             font-weight: 300;
             margin: 1.5rem 0;
             font-family: 'Courier New', monospace;
         }
 
         .label {
-            color: #a0a0a0;
+            color: var(--text-secondary);
             font-size: 1.1rem;
             margin-top: 0.5rem;
             text-transform: uppercase;
@@ -48,8 +71,8 @@
 
         .settings-button {
             background-color: transparent;
-            color: #4CAF50;
-            border: 1px solid #4CAF50;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
             padding: 8px 16px;
             border-radius: 3px;
             cursor: pointer;
@@ -60,9 +83,8 @@
         }
 
         .settings-button:hover {
-            background-color: #4CAF50;
-            color: #ffffff;
-            opacity: 1;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
         }
 
         .modal {
@@ -78,18 +100,18 @@
         }
 
         .modal-content {
-            background-color: #2a2a2a;
+            background-color: var(--modal-bg);
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             max-width: 400px;
             width: 90%;
-            color: #e0e0e0;
+            color: var(--text-color);
         }
 
         .modal-content h2 {
             margin-top: 0;
-            color: #ffffff;
+            color: var(--text-color);
             font-weight: 300;
         }
 
@@ -97,11 +119,11 @@
             width: 100%;
             padding: 8px;
             margin: 10px 0;
-            border: 1px solid #404040;
+            border: 1px solid var(--modal-border);
             border-radius: 4px;
             font-size: 1rem;
-            background-color: #333;
-            color: #ffffff;
+            background-color: var(--modal-input-bg);
+            color: var(--text-color);
         }
 
         .button-group {
@@ -163,9 +185,137 @@
             text-align: center;
             letter-spacing: 1px;
         }
+
+        /* New styles for theme switcher */
+        .theme-button {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            opacity: 0.7;
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+
+        .theme-button:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            opacity: 1;
+        }
+
+        .theme-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .theme-option {
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .theme-option:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-option.dark {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #404040;
+        }
+
+        .theme-option.light {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Add new galaxy theme */
+        .theme-cosmic {
+            --bg-color: #0f0321;
+            --text-color: #e2e1ff;
+            --text-secondary: #a39dff;
+            --accent-color: #7b6eff;
+            --modal-bg: #1a0942;
+            --modal-input-bg: #2a1163;
+            --modal-border: #3d1f89;
+        }
+
+        /* Add galaxy theme option */
+        .theme-option.cosmic {
+            background-color: #0f0321;
+            color: #e2e1ff;
+            border: 1px solid #3d1f89;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-option.cosmic::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, #ffffff20 0%, transparent 3%),
+                radial-gradient(circle at 80% 30%, #ffffff20 0%, transparent 4%),
+                radial-gradient(circle at 40% 70%, #ffffff20 0%, transparent 2%),
+                radial-gradient(circle at 70% 60%, #ffffff20 0%, transparent 3%),
+                radial-gradient(circle at 30% 40%, #ffffff15 0%, transparent 3%),
+                radial-gradient(circle at 60% 80%, #ffffff15 0%, transparent 2%);
+            pointer-events: none;
+        }
     </style>
 </head>
-<body>
+<body class="theme-dark">
+    <button class="theme-button" onclick="openThemeModal()">Change Theme</button>
+
+    <div class="theme-modal" id="themeModal">
+        <div class="modal-content">
+            <h2>Choose Theme</h2>
+            <div class="theme-grid">
+                <div class="theme-option dark" onclick="setTheme('dark')">
+                    <h3>Dark</h3>
+                    <p>Classic dark mode</p>
+                </div>
+                <div class="theme-option light" onclick="setTheme('light')">
+                    <h3>Light</h3>
+                    <p>Clean & bright</p>
+                </div>
+                <div class="theme-option cosmic" onclick="setTheme('cosmic')">
+                    <h3>Cosmic</h3>
+                    <p>Starlit space</p>
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="cancel-button" onclick="closeThemeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <div class="countdown-container">
         <h1 id="countdownTitle">Custom Countdown</h1>
         <div class="countdown" id="countdown">---.------</div>
@@ -254,6 +404,41 @@
         // Update immediately and then every 100ms for smooth countdown
         updateCountdown();
         setInterval(updateCountdown, 100);
+
+        function openThemeModal() {
+            document.getElementById('themeModal').style.display = 'flex';
+        }
+
+        function closeThemeModal() {
+            document.getElementById('themeModal').style.display = 'none';
+        }
+
+        function setTheme(theme) {
+            document.body.className = `theme-${theme}`;
+            closeThemeModal();
+            
+            // Save theme preference
+            localStorage.setItem('preferred-theme', theme);
+        }
+
+        // Load saved theme preference
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('preferred-theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            }
+        });
+
+        // Close theme modal if clicking outside
+        window.onclick = function(event) {
+            const themeModal = document.getElementById('themeModal');
+            const settingsModal = document.getElementById('settingsModal');
+            if (event.target === themeModal) {
+                closeThemeModal();
+            } else if (event.target === settingsModal) {
+                closeModal();
+            }
+        }
     </script>
 </body>
 </html>
