@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown to March</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        .countdown-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            font-size: 3rem;
+            font-weight: 300;
+            font-family: 'Courier New', monospace;
+        }
+
+        .countdown {
+            font-size: 4rem;
+            color: #ffffff;
+            font-weight: 300;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .label {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        .settings-button {
+            background-color: transparent;
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            opacity: 0.7;
+        }
+
+        .settings-button:hover {
+            background-color: #4CAF50;
+            color: #ffffff;
+            opacity: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #2a2a2a;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            color: #e0e0e0;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: #ffffff;
+            font-weight: 300;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: #333;
+            color: #ffffff;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .button-group button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: opacity 0.3s;
+        }
+
+        .save-button {
+            background-color: #4CAF50;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .save-button:hover {
+            opacity: 1;
+        }
+
+        .cancel-button {
+            background-color: transparent;
+            color: #a0a0a0;
+            border: 1px solid #404040;
+        }
+
+        .cancel-button:hover {
+            background-color: #404040;
+        }
+
+        .title-container, .edit-title-button, .title-input {
+            display: none;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-content input#titleInput {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="countdown-container">
+        <h1 id="countdownTitle">Custom Countdown</h1>
+        <div class="countdown" id="countdown">---.------</div>
+        <div class="label">days remaining</div>
+        <button class="settings-button" onclick="openModal()">Settings</button>
+    </div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h2>Countdown Settings</h2>
+            <div class="input-group">
+                <label class="input-label" for="titleInput">Countdown Title</label>
+                <input type="text" id="titleInput" placeholder="Enter countdown title">
+            </div>
+            <div class="input-group">
+                <label class="input-label" for="targetDateTime">Target Date and Time</label>
+                <input type="datetime-local" id="targetDateTime">
+            </div>
+            <div class="button-group">
+                <button class="save-button" onclick="saveSettings()">Save</button>
+                <button class="cancel-button" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let targetDate = new Date(new Date().getFullYear(), 2, 1); // Default to March 1st
+
+        function updateCountdown() {
+            const now = new Date();
+            const difference = targetDate - now;
+            const daysRemaining = difference / (1000 * 60 * 60 * 24);
+            
+            document.getElementById('countdown').textContent = 
+                daysRemaining.toFixed(6);
+        }
+
+        function openModal() {
+            const modal = document.getElementById('settingsModal');
+            const titleInput = document.getElementById('titleInput');
+            const dateInput = document.getElementById('targetDateTime');
+            
+            // Set current title
+            titleInput.value = document.getElementById('countdownTitle').textContent;
+            
+            // Format current target date for datetime-local input
+            const year = targetDate.getFullYear();
+            const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+            const day = String(targetDate.getDate()).padStart(2, '0');
+            const hours = String(targetDate.getHours()).padStart(2, '0');
+            const minutes = String(targetDate.getMinutes()).padStart(2, '0');
+            
+            dateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function saveSettings() {
+            const titleInput = document.getElementById('titleInput');
+            const dateInput = document.getElementById('targetDateTime');
+            
+            // Save title if not empty
+            if (titleInput.value.trim()) {
+                document.getElementById('countdownTitle').textContent = titleInput.value;
+            }
+            
+            // Save date if selected
+            if (dateInput.value) {
+                targetDate = new Date(dateInput.value);
+            }
+            
+            closeModal();
+        }
+
+        // Close modal if clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Update immediately and then every 100ms for smooth countdown
+        updateCountdown();
+        setInterval(updateCountdown, 100);
+    </script>
+</body>
+</html>
