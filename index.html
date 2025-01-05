@@ -383,7 +383,52 @@
     </div>
 
     <script>
-        let targetDate = new Date(new Date().getFullYear(), 2, 1); // Default to March 1st
+        // First define all functions
+        function updateURL(date, title, theme) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('target', date.toISOString());
+            params.set('title', title);
+            params.set('theme', theme);
+            window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+        }
+
+        function getParamsFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const defaultDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 1 month from now
+            
+            return {
+                targetDate: (() => {
+                    const targetParam = params.get('target');
+                    if (targetParam) {
+                        try {
+                            return new Date(targetParam);
+                        } catch (e) {
+                            console.error('Invalid date in URL');
+                        }
+                    }
+                    return defaultDate;
+                })(),
+                
+                title: params.get('title') || 'Custom Countdown',
+                theme: params.get('theme') || 'dark'
+            };
+        }
+
+        // Move initialization to DOMContentLoaded event
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize from URL parameters
+            const urlParams = getParamsFromURL();
+            targetDate = urlParams.targetDate;
+            document.getElementById('countdownTitle').textContent = urlParams.title;
+            setTheme(urlParams.theme);
+            
+            // Start countdown
+            updateCountdown();
+            setInterval(updateCountdown, 100);
+        });
+
+        // Declare targetDate in global scope
+        let targetDate;
 
         function updateCountdown() {
             const now = new Date();
@@ -422,14 +467,20 @@
             const dateInput = document.getElementById('targetDateTime');
             
             // Save title if not empty
-            if (titleInput.value.trim()) {
-                document.getElementById('countdownTitle').textContent = titleInput.value;
-            }
+            const newTitle = titleInput.value.trim() || 'Custom Countdown';
+            document.getElementById('countdownTitle').textContent = newTitle;
             
             // Save date if selected
             if (dateInput.value) {
                 targetDate = new Date(dateInput.value);
             }
+            
+            // Update URL with all parameters
+            updateURL(
+                targetDate, 
+                newTitle, 
+                document.body.className.replace('theme-', '')
+            );
             
             closeModal();
         }
@@ -441,10 +492,6 @@
                 closeModal();
             }
         }
-
-        // Update immediately and then every 100ms for smooth countdown
-        updateCountdown();
-        setInterval(updateCountdown, 100);
 
         function openThemeModal() {
             document.getElementById('themeModal').style.display = 'flex';
@@ -470,6 +517,13 @@
                     spaceAnimationId = null;
                 }
             }
+            
+            // Update URL with current parameters
+            updateURL(
+                targetDate,
+                document.getElementById('countdownTitle').textContent,
+                theme
+            );
             
             // Save theme preference
             localStorage.setItem('preferred-theme', theme);
